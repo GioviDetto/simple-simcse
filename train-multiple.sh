@@ -14,7 +14,7 @@ function bert-large-uncased() {
     for k in {0..49}; do
         poetry run python train.py \
             --model_name bert-large-uncased \
-            --batch_size 64 \
+            --batch_size 32 \
             --lr 1e-5 \
             --output_dir ./outputs/bert-large-uncased/$k \
             --device "cuda:1" \
