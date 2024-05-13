@@ -47,7 +47,7 @@ class Args:
 
     # for more detailed hyperparameter settings, see Appendix.A of the paper
     # FYI: SimCSE is not sensitive to batch sizes and learning rates
-    batch_size: int = 64
+    batch_size: int = 32
     # the number of epochs is 1 for Unsup-SimCSE, and 3 for Sup-SimCSE in the paper
     epochs: int = 1
     lr: float = 3e-5
@@ -280,7 +280,9 @@ def main(args: Args):
 
             # shape of sim_matrix: (batch_size, batch_size)
             # calculate cosine similarity between all pair of embeddings (n x n)
-            sim_matrix = F.cosine_similarity(emb1.unsqueeze(1), emb2.unsqueeze(0), dim=-1)
+            sim_matrix = F.cosine_similarity(
+                emb1.unsqueeze(1), emb2.unsqueeze(0), dim=-1
+            )
             # FYI: SimCSE is sensitive for the temperature parameter.
             # see Table D.1 of the paper
             sim_matrix = sim_matrix / args.temperature
@@ -299,7 +301,9 @@ def main(args: Args):
             lr_scheduler.step()
 
             # for every `args.eval_logging_interval` steps, perform evaluation on STS task and print logs
-            if (step + 1) % args.eval_logging_interval == 0 or (step + 1) == len(train_dataloader):
+            if (step + 1) % args.eval_logging_interval == 0 or (step + 1) == len(
+                train_dataloader
+            ):
                 model.eval()
                 # evaluate on the STS-B development set
                 stsb_score = sts.dev(encode=encode)
@@ -348,7 +352,9 @@ def main(args: Args):
         json.dump(sts_metrics, f, indent=2, ensure_ascii=False)
 
     with (args.output_dir / "config.json").open("w") as f:
-        data = {k: v if type(v) in [int, float] else str(v) for k, v in vars(args).items()}
+        data = {
+            k: v if type(v) in [int, float] else str(v) for k, v in vars(args).items()
+        }
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
